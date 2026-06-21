@@ -253,25 +253,25 @@
       <div class="section-head">
         <div class="section-title">
           <span class="swatch" id="mainSwatch"></span>
-          <span id="activeAreaNameDisplay">Hauptfläche</span>
+          <span id="activeAreaNameDisplay">Dämmplattenfläche</span>
         </div>
         <div class="section-status" id="mainStatus">Noch nicht gezeichnet</div>
       </div>
-      <button class="btn main-color sm full" id="drawMainBtn">Hauptfläche zeichnen</button>
+      <button class="btn main-color sm full" id="drawMainBtn">Dämmplattenfläche zeichnen</button>
     </div>
 
     <!-- Sub areas of active area -->
     <div class="section" id="subSection">
       <div class="section-head">
         <div class="section-title sub">
-          <span class="swatch"></span> Teilflächen
+          <span class="swatch"></span> Kleberkontaktflächen
           <span id="subCountBadge" style="color:var(--text-dim); font-weight:500;"></span>
         </div>
         <div class="section-status sub" id="subStatus"></div>
       </div>
       <div class="sub-list" id="subList"></div>
-      <div class="empty-list" id="subEmpty">Noch keine Teilflächen</div>
-      <button class="btn sub-color sm full" id="addSubBtn" disabled>+ Teilfläche hinzufügen</button>
+      <div class="empty-list" id="subEmpty">Noch keine Kleberkontaktflächen</div>
+      <button class="btn sub-color sm full" id="addSubBtn" disabled>+ Kleberkontaktfläche hinzufügen</button>
     </div>
 
     <!-- Active drawing controls -->
@@ -327,11 +327,11 @@
     </div>
 
     <div class="stats-row highlight">
-      <span class="lbl"><span class="swatch"></span> Hauptfläche</span>
+      <span class="lbl"><span class="swatch"></span> Dämmplattenfläche</span>
       <span class="val"><span id="mainAreaVal">0</span> <span class="area-unit" id="unitMain">cm²</span></span>
     </div>
     <div class="stats-row">
-      <span class="lbl sub"><span class="swatch"></span> Teilflächen gesamt <span id="subTotalCount" style="color:var(--text-faint); margin-left:4px;"></span></span>
+      <span class="lbl sub"><span class="swatch"></span> Kleberkontaktflächen gesamt <span id="subTotalCount" style="color:var(--text-faint); margin-left:4px;"></span></span>
       <span class="val"><span id="subTotalVal">0</span> <span class="area-unit" id="unitSub">cm²</span></span>
     </div>
     <div class="stats-row">
@@ -405,8 +405,8 @@
       </div>
       <h2>Kein Bild geladen</h2>
       <p>Laden Sie ein Foto hoch, auf dem ein Referenzobjekt mit bekannten Abmessungen sichtbar ist.
-         Kalibrieren Sie den Maßstab, zeichnen Sie eine Hauptfläche und anschließend beliebig viele
-         Teilflächen darin. Sie erhalten Flächeninhalte, Umfänge und den Abdeckungsgrad.</p>
+         Kalibrieren Sie den Maßstab, zeichnen Sie eine Dämmplattenfläche und anschließend beliebig viele
+         Kleberkontaktflächen darin. Sie erhalten Flächeninhalte, Umfänge und den Abdeckungsgrad.</p>
     </div>
 
     <!-- Canvas layers -->
