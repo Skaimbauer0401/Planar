@@ -852,11 +852,11 @@
     } else if (state.drawing === 'main') {
       modeBanner.style.display = 'flex';
       modeBanner.classList.add('main'); modeBanner.classList.remove('sub');
-      modeBannerText.innerHTML = `<b>${esc(activeArea()?.name || 'Hauptfläche')}</b> zeichnen · ersten Punkt anklicken oder <kbd>Enter</kbd> zum Schließen`;
+      modeBannerText.innerHTML = `<b>${esc(activeArea()?.name || 'Dämmplattenfläche')}</b> zeichnen · ersten Punkt anklicken oder <kbd>Enter</kbd> zum Schließen`;
     } else if (state.drawing === 'sub') {
       modeBanner.style.display = 'flex';
       modeBanner.classList.add('sub'); modeBanner.classList.remove('main');
-      modeBannerText.innerHTML = `<b>Teilfläche #${activeArea()?.subs.length}</b> zeichnen · ersten Punkt anklicken oder <kbd>Enter</kbd> zum Schließen`;
+      modeBannerText.innerHTML = `<b>Kleberkontaktfläche #${activeArea()?.subs.length}</b> zeichnen · ersten Punkt anklicken oder <kbd>Enter</kbd> zum Schließen`;
     } else if (state.mode === 'measure') {
       modeBanner.style.display = 'none';
     }
@@ -867,7 +867,7 @@
     else if (state.mode === 'measure') modeText = 'Messen';
     statMode.textContent = modeText;
     const area = activeArea();
-    statDrawing.textContent = state.drawing === 'main' ? 'Hauptfläche' : state.drawing === 'sub' ? `Teil #${area?.subs.length}` : '—';
+    statDrawing.textContent = state.drawing === 'main' ? 'Dämmplattenfläche' : state.drawing === 'sub' ? `Kleberkontaktfläche #${area?.subs.length}` : '—';
 
     // Section visual states
     mainSection.classList.toggle('drawing', state.drawing === 'main');
@@ -876,7 +876,7 @@
 
     // Update active area name + swatch color
     const col = areaColor(state.activeAreaIdx);
-    if (activeAreaNameDisplay) activeAreaNameDisplay.textContent = area?.name || 'Hauptfläche';
+    if (activeAreaNameDisplay) activeAreaNameDisplay.textContent = area?.name || 'Dämmplattenfläche';
     if (mainSwatch) mainSwatch.style.background = col.stroke;
     addAreaBtn.disabled = state.mode !== 'measure';
 
@@ -885,17 +885,17 @@
     if (!aMain) {
       mainStatus.textContent = 'Noch nicht gezeichnet';
       mainStatus.classList.remove('ok', 'drawing');
-      drawMainBtn.textContent = 'Hauptfläche zeichnen';
+      drawMainBtn.textContent = 'Dämmplattenfläche zeichnen';
       drawMainBtn.disabled = state.drawing === 'sub';
     } else if (!aMain.closed) {
       mainStatus.textContent = `Zeichnet… ${aMain.points.length} Punkte`;
       mainStatus.classList.remove('ok'); mainStatus.classList.add('drawing');
-      drawMainBtn.textContent = 'Hauptfläche abbrechen';
+      drawMainBtn.textContent = 'Dämmplattenfläche abbrechen';
       drawMainBtn.disabled = false;
     } else {
       mainStatus.textContent = `${fmt(polygonRealArea(aMain.points))} ${state.unit}²`;
       mainStatus.classList.remove('drawing'); mainStatus.classList.add('ok');
-      drawMainBtn.textContent = 'Hauptfläche neu zeichnen';
+      drawMainBtn.textContent = 'Dämmplattenfläche neu zeichnen';
       drawMainBtn.disabled = state.drawing === 'sub';
     }
 
@@ -933,7 +933,7 @@
     closeFab.style.display = state.drawing ? 'flex' : 'none';
     closeFab.disabled = !canClose;
     closeFab.classList.toggle('sub', state.drawing === 'sub');
-    closeFabLabel.textContent = state.drawing === 'main' ? 'Hauptfläche schließen' : `Teilfläche #${activeArea()?.subs.length} schließen`;
+    closeFabLabel.textContent = state.drawing === 'main' ? 'Dämmplattenfläche schließen' : `Kleberkontaktfläche #${activeArea()?.subs.length} schließen`;
 
     updateStats();
     persistState();
@@ -1043,9 +1043,9 @@
     coverageVal.classList.toggle('over', over);
     coverageFill.classList.toggle('over', over);
     if (over) {
-      coverageNote.textContent = `Teilflächen überschreiten Hauptfläche um ${(coverage - 100).toFixed(1).replace('.', ',')} %`;
+      coverageNote.textContent = `Kleberkontaktflächen überschreiten Dämmplattenfläche um ${(coverage - 100).toFixed(1).replace('.', ',')} %`;
     } else if (coverage > 0) {
-      coverageNote.textContent = `${(100 - coverage).toFixed(1).replace('.', ',')} % der Hauptfläche nicht abgedeckt`;
+      coverageNote.textContent = `${(100 - coverage).toFixed(1).replace('.', ',')} % der Dämmplattenfläche nicht abgedeckt`;
     } else {
       coverageNote.textContent = '';
     }
@@ -1447,13 +1447,13 @@
     const multi = closedAreas.length > 1;
     const areaResults = closedAreas.map((area) => {
       const prefix = multi ? `${area.name} – ` : '';
-      const mainRes = writePolygonBreakdown(L, `${prefix}HAUPT`, area.main.points, c);
+      const mainRes = writePolygonBreakdown(L, `${prefix}DÄMMPLATTENFLÄCHE`, area.main.points, c);
       L.push('');
       const closedSubs = area.subs.filter(s => s.closed);
       const subResults = closedSubs.map((sub, si) => {
-        const r   = writePolygonBreakdown(L, `${prefix}TEIL #${si + 1}`, sub.points, c);
+        const r   = writePolygonBreakdown(L, `${prefix}KLEBERKONTAKTFLÄCHE #${si + 1}`, sub.points, c);
         const pct = mainRes.realArea > 0 ? (r.realArea / mainRes.realArea) * 100 : 0;
-        L.push(`  % der Hauptfläche  = ${nf3(r.realArea)} / ${nf3(mainRes.realArea)} × 100 = ${nf2(pct)} %`);
+        L.push(`  % der Dämmplattenfläche  = ${nf3(r.realArea)} / ${nf3(mainRes.realArea)} × 100 = ${nf2(pct)} %`);
         return { si, realArea: r.realArea, realPerim: r.realPerim, pct };
       });
       L.push('');
@@ -1464,7 +1464,7 @@
       const tag = multi ? ` – ${area.name}` : '';
       L.push(`[GESAMT${tag}]`);
       L.push(`  A_gesamt      = ${subResults.length ? subResults.map(s => nf3(s.realArea)).join(' + ') + ' = ' : ''}${nf3(subTotal)} ${u}²`);
-      L.push(`  Abdeckung     = ${nf3(subTotal)} / ${nf3(mainRes.realArea)} × 100 = ${nf2(coverage)} %${coverage > 100 ? '  (ÜBERSCHREITET Hauptfläche)' : ''}`);
+      L.push(`  Abdeckung     = ${nf3(subTotal)} / ${nf3(mainRes.realArea)} × 100 = ${nf2(coverage)} %${coverage > 100 ? '  (ÜBERSCHREITET Dämmplattenfläche)' : ''}`);
       L.push(`  Nicht abged.  = ${nf3(mainRes.realArea)} - ${nf3(subTotal)} = ${nf3(uncovered)} ${u}²`);
       L.push('');
       return { area, mainRes, subResults, subTotal, coverage, uncovered };
@@ -1478,21 +1478,21 @@
     L.push('[ZUSAMMENFASSUNG]');
     areaResults.forEach(({ area, mainRes, subResults, subTotal }) => {
       if (multi) L.push(`  --- ${area.name} ---`);
-      L.push(`  Hauptfläche       ${nf3(mainRes.realArea).padStart(14)} ${u}²`);
-      L.push(`  Hauptumfang       ${nf3(mainRes.realPerim).padStart(14)} ${u}`);
+      L.push(`  ${'Dämmplattenfläche'.padEnd(24)}${nf3(mainRes.realArea).padStart(14)} ${u}²`);
+      L.push(`  ${'Dämmplattenumfang'.padEnd(24)}${nf3(mainRes.realPerim).padStart(14)} ${u}`);
       subResults.forEach(s => {
-        L.push(`  Teil #${(s.si+1).toString().padEnd(3)}        ${nf3(s.realArea).padStart(14)} ${u}²   ${nf2(s.pct).padStart(6)} %`);
+        L.push(`  ${('Kleberkontaktfl. #' + (s.si+1)).padEnd(24)}${nf3(s.realArea).padStart(14)} ${u}²   ${nf2(s.pct).padStart(6)} %`);
       });
-      L.push(`  Teilfl. gesamt    ${nf3(subTotal).padStart(14)} ${u}²`);
+      L.push(`  ${'Kleberkontaktfl. gesamt'.padEnd(24)}${nf3(subTotal).padStart(14)} ${u}²`);
     });
     if (multi) {
       L.push('');
       L.push('  --- Alle Bereiche ---');
-      L.push(`  Gesamt-Hauptfl.   ${nf3(grandMain).padStart(14)} ${u}²`);
-      L.push(`  Gesamt-Teilfl.    ${nf3(grandSub).padStart(14)} ${u}²`);
+      L.push(`  ${'Gesamt-Dämmplattenfl.'.padEnd(24)}${nf3(grandMain).padStart(14)} ${u}²`);
+      L.push(`  ${'Gesamt-Kleberkontaktfl.'.padEnd(24)}${nf3(grandSub).padStart(14)} ${u}²`);
     }
-    L.push(`  Nicht abged.      ${nf3(grandUnc).padStart(14)} ${u}²`);
-    L.push(`  Abdeckung         ${nf2(grandCoverage).padStart(14)} %`);
+    L.push(`  ${'Nicht abged.'.padEnd(24)}${nf3(grandUnc).padStart(14)} ${u}²`);
+    L.push(`  ${'Abdeckung'.padEnd(24)}${nf2(grandCoverage).padStart(14)} %`);
 
     return L.join('\n');
   }
@@ -1755,9 +1755,9 @@
     const summaryRows = areaItems.map(ai => {
       const areaLabel = multiArea ? `<strong>${esc(ai.area.name)}</strong><br>` : '';
       const subRows_ = ai.subs.map(s =>
-        `<tr><td>${areaLabel}Teilfläche #${s.idx}</td><td class="num">${fmtDe(s.area)} ${u}²</td><td class="num">${fmtDe(s.perim)} ${u}</td><td class="num">${pctDe(s.pct)} %</td></tr>`
+        `<tr><td>${areaLabel}Kleberkontaktfläche #${s.idx}</td><td class="num">${fmtDe(s.area)} ${u}²</td><td class="num">${fmtDe(s.perim)} ${u}</td><td class="num">${pctDe(s.pct)} %</td></tr>`
       ).join('');
-      const mainRow = `<tr><td><strong>${multiArea ? esc(ai.area.name) + ' – ' : ''}Hauptfläche</strong></td><td class="num">${fmtDe(ai.mainArea)} ${u}²</td><td class="num">${fmtDe(ai.mainPerim)} ${u}</td><td class="num">100,0 %</td></tr>`;
+      const mainRow = `<tr><td><strong>${multiArea ? esc(ai.area.name) + ' – ' : ''}Dämmplattenfläche</strong></td><td class="num">${fmtDe(ai.mainArea)} ${u}²</td><td class="num">${fmtDe(ai.mainPerim)} ${u}</td><td class="num">100,0 %</td></tr>`;
       return mainRow + subRows_;
     }).join('');
 
@@ -1807,12 +1807,12 @@
 <div class="caption">Entzerrtes Bild mit eingezeichneten Flächen.</div>
 
 <h2>4. Zusammenfassung</h2>
-<div class="highlight">Gesamte Hauptfläche: <span class="big">${fmtDe(grandMain)} ${u}²</span> · Teilflächen: <span class="big">${fmtDe(grandSub)} ${u}²</span> · Abdeckung: <span class="big">${pctDe(grandCov)} %</span></div>
+<div class="highlight">Gesamte Dämmplattenfläche: <span class="big">${fmtDe(grandMain)} ${u}²</span> · Kleberkontaktflächen: <span class="big">${fmtDe(grandSub)} ${u}²</span> · Abdeckung: <span class="big">${pctDe(grandCov)} %</span></div>
 <table class="summ">
   <thead><tr><th>Fläche</th><th>Inhalt</th><th>Umfang</th><th>Anteil</th></tr></thead>
   <tbody>
     ${summaryRows}
-    <tr class="total"><td>Teilflächen gesamt</td><td class="num">${fmtDe(grandSub)} ${u}²</td><td class="num">—</td><td class="num">${pctDe(grandCov)} %</td></tr>
+    <tr class="total"><td>Kleberkontaktflächen gesamt</td><td class="num">${fmtDe(grandSub)} ${u}²</td><td class="num">—</td><td class="num">${pctDe(grandCov)} %</td></tr>
     <tr><td>Nicht abgedeckter Bereich</td><td class="num">${fmtDe(grandUnc)} ${u}²</td><td class="num">—</td><td class="num">${pctDe(100 - grandCov)} %</td></tr>
   </tbody>
 </table>
